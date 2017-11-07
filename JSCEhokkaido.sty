@@ -1,0 +1,147 @@
+% for DEBUG
+\usepackage{layout}
+
+\usepackage{ifthen}
+
+% setting margins
+\usepackage[top=20truemm,bottom=25truemm,left=20truemm,right=20truemm]{geometry}
+% calculate by geometry
+%\setlength{\oddsidemargin}{-9pt}
+%\setlength{\headheight}{20pt}
+%\setlength{\textheight}{785pt}
+%\setlength{\marginparsep}{18pt}
+%\setlength{\footskip}{31pt}
+%\setlength{\topmargin}{-48pt}
+%\setlength{\headsep}{18pt}
+%\setlength{\textwidth}{529pt}
+%\setlength{\marginparwidth}{36pt}
+%\setlength{\marginparpush}{15pt}
+
+% page number setting
+\pagestyle{empty}
+
+% line spacing adjustment for specified number of lines (54 lines)
+\renewcommand{\baselinestretch}{0.97}
+
+% spacing adjustment of between columns for number of words ()
+\setlength{\columnsep}{63truept}
+
+\newcount\author@count
+
+\def\author#1#2#3#4{%
+ \advance\author@count\@ne
+\expandafter\def\csname authoraffiliate\the\author@count\endcsname{#1}
+\expandafter\def\csname authormembershiptype\the\author@count\endcsname{#2}
+\expandafter\def\csname authorname\the\author@count\endcsname{#3}
+\expandafter\def\csname eauthorname\the\author@count\endcsname{#4}
+}
+
+% title -> (j)title, etitle
+\def\title#1#2{\def\@title{#1}\def\@etitle{#2}}
+
+% title style
+\def\@maketitle{
+\newpage\null
+\begin{center}
+\let\footnote\thanks
+% output (j)title
+{\fontsize{14truept}{0pt}\selectfont\bfseries\@title}
+\vskip\Cvs
+% output etitle
+{\fontsize{9truept}{0pt}\selectfont\@etitle}
+\vskip\Cvs
+{\fontsize{9truept}{\Cvs}\selectfont
+\begin{flushright}
+% output authors
+{
+\count@\@ne
+\advance\author@count\@ne
+\edef\xx@tl{\noexpand\begin{tabular}{rrcl}\noexpand}
+\@whilenum{\count@<\author@count}\do{
+\xx@mktbl@app{\csname authoraffiliate\the\count@\endcsname&}         % 所属
+\xx@mktbl@app{\csname authormembershiptype\the\count@\endcsname&}    % 会員種別
+\xx@mktbl@app{\csname authorname\the\count@\endcsname&}              % 氏名
+\xx@mktbl@app{(\csname eauthorname\the\count@\endcsname)\noexpand\\} % 氏名（英語）
+\advance\count@\@ne
+}
+\xx@mktbl@app{\noexpand\end{tabular}}\xx@tl
+}
+\end{flushright}
+}
+\end{center}
+\vskip2\Cvs
+\ifvoid\@abstractbox\else\centerline{\box\@abstractbox}\vskip1.5em\fi
+}
+\def\xx@mktbl@app#1{\edef\xx@tmp{#1}\toks\tw@\expandafter{\xx@tmp}%
+  \toks@\expandafter{\xx@tl}\edef\xx@tl{\the\toks@\the\toks\tw@}}
+
+%% section number style
+\def\@seccntformat#1{%
+\ifnum\pdfstrcmp{#1}{section}=0{\csname the#1\endcsname.\;}\fi% section
+\ifnum\pdfstrcmp{#1}{subsection}=0{\csname the#1\endcsname\;}\fi% subsection
+\ifnum\pdfstrcmp{#1}{subsubsection}=0{\csname the#1\endcsname)\:}\fi% subsubsection
+}
+
+% section style
+\def\section{%
+  \@startsection%
+  {section}% name
+  {1}% level
+  {\z@}% indent
+  {0.5\Cvs \@plus.5\Cdp \@minus.2\Cdp}% beforeskip
+  {0truept}% afterskip
+  {\fontsize{9truept}{\Cvs}\selectfont\bfseries}% style
+}
+
+% subsection style
+\def\subsection{
+  \@startsection%
+  {subsection}% name
+  {2}% level
+  {\z@}% indent
+  {0.5\Cvs \@plus.5\Cdp \@minus.2\Cdp}% beforeskip
+  {0truept}% afterskip
+  {\fontsize{9truept}{\Cvs}\selectfont\bfseries}% style
+}
+
+% subsubsection style
+\renewcommand*{\thesubsubsection}{\arabic{subsubsection}}
+\def\subsubsection{
+  \@startsection%
+  {subsubsection}% name
+  {3}% level
+  {\z@}% indent
+  {0truept \@plus.5\Cdp \@minus.2\Cdp}% beforeskip
+  {0truept}% afterskip
+  {\fontsize{9truept}{\Cvs}\selectfont}% style
+}
+
+% figure caption style
+\renewcommand{\figurename}{図}
+\renewcommand{\thefigure}{\@arabic\c@figure}
+\def\fnum@figure{\bfseries\figurename-\thefigure}
+
+% table caption style
+\renewcommand{\tablename}{表}
+\renewcommand{\thetable}{\@arabic\c@table}
+\def\fnum@table{\bfseries\tablename-\thetable}
+
+% enumerate style
+\renewcommand{\labelenumi}{\arabic{enumi})}
+
+% fig, tab ref
+\newcommand\figref[1]{\bfseries{図-\ref{#1}}}
+\newcommand\tabref[1]{\bfseries{表-\ref{#1}}}
+
+% 謝辞
+\def\acknowledge{%
+\vskip\Cvs%
+\noindent%
+{\bfseries{謝辞: }}%
+}
+
+% 参考文献
+\def\reference{%
+\vskip\Cvs%
+\section*{参考文献}%
+}
